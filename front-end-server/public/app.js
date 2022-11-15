@@ -134,21 +134,110 @@ function createNewList() {
           <th scope="col" id="status-col">Status</th>
       </tr>
       </thead>
-      <tbody>
-      <tr>
-        <td>
-        <img src="./images/trash-outline.svg"  id="del-row-svg" width="30" height="30">
-        </td>
-        <td><input></input></td>
-        <th scope="row"><div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                          <label class="form-check-label" for="flexSwitchCheckDefault"></label>
-                        </div></th>
-      </tr>
+      <tbody id="table-body">
+      
       </tbody>
   </table>
+  <button type="button" class="btn btn-warning" id="add-item-btn">Add New Item</button>
+      <button type="button" class="btn btn-success" id="save-changes-btn" data-bs-toggle="modal" data-bs-target="#list-updated-modal">Save Changes</button>
   </div>`;
   appendHtml(main, html);
+  console.log(`created ${inputTitle.value} list and populated to main`);
+
+  const addItemButton = document.querySelector("#add-item-btn");
+  const saveChangesButton = document.querySelector("#save-changes-btn");
+  const tableBody = document.querySelector("#table-body");
+
+  addItemButton.addEventListener("click", () => {
+    console.log("add new item button clicked");
+    let insertNewRow = document.createElement("tr");
+
+    insertNewRow.innerHTML = `
+    <td>
+    <img src="./images/trash-outline.svg"  id="del-row-svg" width="30" height="30">
+    </td>
+    <td><input id="new-item-input"></input></td>
+    <th scope="row"><div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                      <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                    </div></th>
+    `;
+    tableBody.appendChild(insertNewRow);
+
+    let delRowBtns = document.querySelectorAll("#del-row-svg");
+    for (var i = 0; i < delRowBtns.length; i++) {
+      delRowBtns[i].addEventListener("click", () => {
+        console.log(`del row btn ${i} clicked`);
+        console.log(delRowBtns);
+        tableBody.removeChild(tableBody.children[i - 1]);
+      });
+    }
+  });
+
+  saveChangesButton.addEventListener("click", () => {
+    console.log("save changes button clicked");
+
+    // let newItemInputs = document.querySelectorAll("#new-item-input");
+    // for (var j = 0; j < newItemInputs.length; j++) {
+    //   console.log(`input ${j}, value: ${newItemInputs[j].value}`);
+    // }
+
+    let tableNameToLowercaseAndSpacesTo_ = () => {
+      let splitWordArr = inputTitle.value.split(" ");
+      for (each in splitWordArr) {
+        splitWordArr[each] = splitWordArr[each].toLowerCase();
+      }
+      let resultText = splitWordArr.join("_");
+      return resultText;
+    };
+    console.log(tableNameToLowercaseAndSpacesTo_());
+
+    for (var i = 0; i < tableBody.children.length; i++) {
+      let newItemInputs = document.querySelectorAll("#new-item-input");
+      let item = newItemInputs[i].value;
+      console.log(`input ${i}, value: ${item}`);
+
+      let currentSwitchStatus =
+        document.querySelectorAll(".form-check-input")[i].id;
+      console.log(currentSwitchStatus);
+      var completionStatus;
+      if (currentSwitchStatus === "flexSwitchCheckDefault") {
+        completionStatus = false;
+      } else if (currentSwitchStatus === "flexSwitchCheckChecked") {
+        completionStatus = true;
+      }
+      console.log(
+        `item ${i} switch status: ${currentSwitchStatus}, item ${i} completion status: ${completionStatus}`
+      );
+
+      let splitAndCapTableTitle = () => {
+        let splitWordArr = tableName.split("_");
+        for (each in splitWordArr) {
+          splitWordArr[each] =
+            splitWordArr[each].charAt(0).toUpperCase() +
+            splitWordArr[each].slice(1);
+        }
+        let resultText = splitWordArr.join(" ");
+        return resultText;
+      };
+
+      fetch(
+        `${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}/${item}/${completionStatus}`,
+        { method: "POST" }
+      ).then((response) => response.json());
+      // .then((data) =>
+      //   setTimeout(generateListFromSavedLists(data, inputTitle.value), 1000)
+      // );
+    }
+    const continueButton = document.querySelector("#continue-btn");
+
+    continueButton.addEventListener("click", () => {
+      console.log("continue button clicked. table name: ", inputTitle.value);
+      fetch(`${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}`)
+        .then((response) => response.json())
+        .then((data) => generateListFromSavedLists(data, inputTitle.value));
+    });
+  });
 }
 
 saveContinueButton.addEventListener("click", () => {
@@ -343,7 +432,7 @@ async function generateListFromSavedLists(data, tableName) {
   var html_end = `</tbody>
       </table>
       <button type="button" class="btn btn-warning" id="add-item-btn">Add New Item</button>
-      <button type="button" class="btn btn-success" id="save-changes-btn">Save Changes</button>
+      <button type="button" class="btn btn-success" id="save-changes-btn" data-bs-toggle="modal" data-bs-target="#list-updated-modal">Save Changes</button>
       </div>
       `;
   for (var i = 0; i < data.length; i++) {
@@ -436,6 +525,17 @@ async function generateListFromSavedLists(data, tableName) {
         `item ${i} switch status: ${currentSwitchStatus}, item ${i} completion status: ${completionStatus}`
       );
 
+      // let splitAndCapTableTitle = () => {
+      //   let splitWordArr = tableName.split("_");
+      //   for (each in splitWordArr) {
+      //     splitWordArr[each] =
+      //       splitWordArr[each].charAt(0).toUpperCase() +
+      //       splitWordArr[each].slice(1);
+      //   }
+      //   let resultText = splitWordArr.join(" ");
+      //   return resultText;
+      // };
+
       fetch(
         `${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}/${item}/${completionStatus}`,
         { method: "POST" }
@@ -444,6 +544,14 @@ async function generateListFromSavedLists(data, tableName) {
         .then((data) =>
           generateListFromSavedLists(data, splitAndCapTableTitle())
         );
+      const continueButton = document.querySelector("#continue-btn");
+
+      continueButton.addEventListener("click", () => {
+        console.log("continue button clicked. table name: ", tableName);
+        fetch(`${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}`)
+          .then((response) => response.json())
+          .then((data) => generateListFromSavedLists(data, tableName));
+      });
     }
   });
 }
