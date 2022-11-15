@@ -14,7 +14,7 @@ const sampleListButton = document.querySelector("#sample-list-btn");
 const getStartedButton = document.querySelector("#get-started-btn");
 const menuButton = document.querySelector("#menu-btn");
 const newListModal = document.querySelector(".modal");
-const homeLink = document.querySelector("#home-link");
+const homeLinks = document.querySelectorAll("#home-link");
 const contactLink = document.querySelector("#contact-link");
 const savedListsLink = document.querySelector("#saved-lists-link");
 const savedListsModalContent = document.querySelector("#saved-lists-modal-cnt");
@@ -169,10 +169,12 @@ getStartedButton.addEventListener("click", () => {
   console.log("menu button clicked");
 });
 
-homeLink.addEventListener("click", () => {
-  window.location.reload();
-  console.log("Home link clicked. Home page generated.");
-});
+for (var i = 0; i < homeLinks.length; i++) {
+  homeLinks[i].addEventListener("click", () => {
+    window.location.reload();
+    console.log("Home link clicked. Home page generated.");
+  });
+}
 
 //ORIGINAL
 // async function generateListFromSavedLists(data, tableName) {
