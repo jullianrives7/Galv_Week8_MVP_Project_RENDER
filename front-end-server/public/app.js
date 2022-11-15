@@ -1,5 +1,11 @@
-// const express = require("express");
-// const module = require("random_module");
+const ENV = "production";
+//const ENV = "dev";
+
+let ApiUrl =
+  ENV == "dev"
+    ? "http://localhost:3001"
+    : "https://api-server-mixr.onrender.com";
+console.log("API:", ApiUrl);
 
 const allFamiliesButton = document.querySelector("#all_families_btn");
 const allParentsButton = document.querySelector("#all_parents_btn");
