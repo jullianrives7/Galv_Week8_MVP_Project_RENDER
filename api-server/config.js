@@ -1,8 +1,6 @@
 module.exports = {
   dev: {
-    // connectionString: "postgresql://postgres:docker@127.0.0.1:5432/mvp_db",
-    connectionString:
-      "postgres://mvp_db_k3il_user:Ol3hwGo72Nb9kf4K9rJn3FPlYnBxYa4n@dpg-cdpsf71gp3jr9p60aeug-a/mvp_db_k3il",
+    connectionString: "postgresql://postgres:docker@127.0.0.1:5432/mvp_db",
     port: "3001",
   },
   production: {
