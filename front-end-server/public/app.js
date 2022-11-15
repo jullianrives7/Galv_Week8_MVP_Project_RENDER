@@ -4,7 +4,7 @@ const ENV = "production";
 let ApiUrl =
   ENV == "dev"
     ? "http://localhost:3001"
-    : "https://api-server-mixr.onrender.com";
+    : "https://api-server-8qsp.onrender.com";
 console.log("API:", ApiUrl);
 
 const allFamiliesButton = document.querySelector("#all_families_btn");
