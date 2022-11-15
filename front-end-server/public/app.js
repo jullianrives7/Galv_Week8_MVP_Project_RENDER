@@ -2,9 +2,7 @@ const ENV = "production";
 //const ENV = "dev";
 
 let ApiUrl =
-  ENV == "dev"
-    ? "http://localhost:3001"
-    : "https://api-server-8qsp.onrender.com";
+  ENV == "dev" ? ApiUrl + "" : "https://api-server-8qsp.onrender.com";
 console.log("API:", ApiUrl);
 
 const allFamiliesButton = document.querySelector("#all_families_btn");
@@ -30,14 +28,14 @@ const savedListButtons = document.getElementsByClassName("saved-list-button");
 const deleteListButton = document.querySelector("#delete-list");
 
 async function consoleLogSampleTdListFrom_db() {
-  await fetch("http://localhost:3001/api/sample_td_list/all")
+  await fetch(ApiUrl + "/api/sample_td_list/all")
     .then((response) => response.json())
     .then((data) => console.log("Sample To-Do List Data:", data));
 }
 consoleLogSampleTdListFrom_db();
 
 async function consoleLogAllListsFrom_db() {
-  await fetch("http://localhost:3001/api/get_all_lists")
+  await fetch(ApiUrl + "/api/get_all_lists")
     .then((response) => response.json())
     .then((data) =>
       console.log("All Lists from DB:", JSON.parse(JSON.stringify(data)))
@@ -97,7 +95,7 @@ async function generateSampleList(data) {
 
 sampleListButton.addEventListener("click", () => {
   console.log("sample button clicked");
-  fetch("http://localhost:3001/api/sample_td_list/all")
+  fetch(ApiUrl + "/api/sample_td_list/all")
     .then((response) => response.json())
     .then((data) => console.log(generateSampleList(data)));
 });
@@ -112,12 +110,9 @@ function createNewList() {
     return resultText;
   };
 
-  fetch(
-    `http://localhost:3001/api/new_td_list/${titleToLowercaseAndSpacesTo_()}`,
-    {
-      method: "POST",
-    }
-  )
+  fetch(`${ApiUrl}/api/new_td_list/${titleToLowercaseAndSpacesTo_()}`, {
+    method: "POST",
+  })
     .then((response) => response.json())
     .then((data) => console.log("New table created in api db."));
   while (main.hasChildNodes()) {
@@ -440,7 +435,7 @@ async function generateListFromSavedLists(data, tableName) {
       );
 
       fetch(
-        `http://localhost:3001/api/${tableNameToLowercaseAndSpacesTo_()}/${item}/${completionStatus}`,
+        `${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}/${item}/${completionStatus}`,
         { method: "POST" }
       )
         .then((response) => response.json())
@@ -523,7 +518,7 @@ savedListsLink.addEventListener("click", () => {
               return resultText;
             };
 
-            fetch(`http://localhost:3001/api/${event.target.id}`)
+            fetch(`${ApiUrl}/api/${event.target.id}`)
               .then((response) => response.json())
               .then((data) =>
                 generateListFromSavedLists(data, splitAndCapTableTitle())
@@ -558,7 +553,7 @@ savedListsLink.addEventListener("click", () => {
             console.log(target_index());
             console.log(event.target.id);
             console.log(savedListsModalBody.children);
-            fetch(`http://localhost:3001/api/${event.target.id}`, {
+            fetch(`${ApiUrl}/api/${event.target.id}`, {
               method: "DELETE",
             })
               .then((response) => response.json())
@@ -582,7 +577,7 @@ savedListsLink.addEventListener("click", () => {
     }
   }
 
-  fetch("http://localhost:3001/api/get_all_lists")
+  fetch(ApiUrl + "/api/get_all_lists")
     .then((response) => response.json())
     .then((data) => postSavedListsToModal(JSON.parse(JSON.stringify(data))));
 });
