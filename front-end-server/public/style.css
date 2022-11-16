@@ -44,6 +44,15 @@
 #del-row-svg:hover{
     opacity:.5;
 }
+#del-saved-row-svg {
+    opacity: .2;
+    padding-bottom: 3%;
+    position: relative;
+    left: 25%;
+}
+#del-saved-row-svg:hover{
+    opacity:.5;
+}
 #hero_img {
     padding-top: 0%;
 }

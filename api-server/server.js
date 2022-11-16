@@ -128,6 +128,18 @@ app.delete("/api/:title", (req, res) => {
     .catch((e) => console.error(e.stack));
 });
 
+app.delete("/api/:title/:item", (req, res) => {
+  client
+    .query(
+      `DELETE FROM ${req.params.title} WHERE list_item = '${req.params.item}'`
+    )
+    .then((result) => {
+      console.log(`Deleted "${req.params.title}" list table.`);
+      res.send(`"${req.params.title}" list table successfully removed.`);
+    })
+    .catch((e) => console.error(e.stack));
+});
+
 app.listen(PORT, () => {
   console.log(`Our app running on ${PORT}`);
 });

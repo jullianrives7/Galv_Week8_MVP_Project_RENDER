@@ -210,16 +210,16 @@ function createNewList() {
         `item ${i} switch status: ${currentSwitchStatus}, item ${i} completion status: ${completionStatus}`
       );
 
-      let splitAndCapTableTitle = () => {
-        let splitWordArr = tableName.split("_");
-        for (each in splitWordArr) {
-          splitWordArr[each] =
-            splitWordArr[each].charAt(0).toUpperCase() +
-            splitWordArr[each].slice(1);
-        }
-        let resultText = splitWordArr.join(" ");
-        return resultText;
-      };
+      // let splitAndCapTableTitle = () => {
+      //   let splitWordArr = tableName.split("_");
+      //   for (each in splitWordArr) {
+      //     splitWordArr[each] =
+      //       splitWordArr[each].charAt(0).toUpperCase() +
+      //       splitWordArr[each].slice(1);
+      //   }
+      //   let resultText = splitWordArr.join(" ");
+      //   return resultText;
+      // };
 
       fetch(
         `${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}/${item}/${completionStatus}`,
@@ -435,6 +435,7 @@ async function generateListFromSavedLists(data, tableName) {
       <button type="button" class="btn btn-success" id="save-changes-btn" data-bs-toggle="modal" data-bs-target="#list-updated-modal">Save Changes</button>
       </div>
       `;
+  let num = 0;
   for (var i = 0; i < data.length; i++) {
     let switchStatus1;
     let switchStatus2;
@@ -450,15 +451,57 @@ async function generateListFromSavedLists(data, tableName) {
                       <td>${data[i].list_item}</td>
                       <th scope="row"><div class="form-check form-switch">
                           <input class="form-check-input" type="checkbox" role="switch" id=${switchStatus1}>
-                          <label class="form-check-label" for=${switchStatus2}></label>
+                          <label class="form-check-label" for=${switchStatus2}></label><img src="./images/close-circle-outline.svg"  id="del-saved-row-svg" width="23" height="23" name="${num}">
                         </div></th>
                   </tr>`;
     html_middle = html_middle + new_row;
+    num = num += 1;
   }
 
   let html = html_start + html_middle + html_end;
   appendHtml(main, html);
   console.log(`populated ${tableName} list to main`);
+
+  const deleteSavedRowButtons = document.querySelectorAll("#del-saved-row-svg");
+  for (var i = 0; i < deleteSavedRowButtons.length; i++) {
+    deleteSavedRowButtons[i].addEventListener("click", (e) => {
+      console.log(`delete saved row button ${e.target.name} clicked`);
+      console.log(e.target);
+      console.log(e.target.name);
+      console.log(Number(e.target.name));
+
+      // let index = Number(e.target.name);
+      const tableBody = document.querySelector("#table-body");
+      console.log(tableBody.children);
+
+      let tableNameToLowercaseAndSpacesTo_ = () => {
+        let splitWordArr = tableName.split(" ");
+        for (each in splitWordArr) {
+          splitWordArr[each] = splitWordArr[each].toLowerCase();
+        }
+        let resultText = splitWordArr.join("_");
+        return resultText;
+      };
+
+      let item =
+        e.target.parentNode.parentNode.parentNode.children[1].innerHTML;
+
+      fetch(`${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}/${item}`, {
+        method: "DELETE",
+      })
+        .then((response) => response.json())
+        .then((data) => generateListFromSavedLists(data, tableName));
+
+      tableBody.removeChild(e.target.parentNode.parentNode.parentNode);
+      console.log(
+        e.target.parentNode.parentNode.parentNode.children[1].innerHTML
+      );
+
+      console.log(tableNameToLowercaseAndSpacesTo_());
+      console.log(item);
+    });
+  }
+  console.log(deleteSavedRowButtons);
 
   const addItemButton = document.querySelector("#add-item-btn");
   const saveChangesButton = document.querySelector("#save-changes-btn");
@@ -524,17 +567,6 @@ async function generateListFromSavedLists(data, tableName) {
       console.log(
         `item ${i} switch status: ${currentSwitchStatus}, item ${i} completion status: ${completionStatus}`
       );
-
-      // let splitAndCapTableTitle = () => {
-      //   let splitWordArr = tableName.split("_");
-      //   for (each in splitWordArr) {
-      //     splitWordArr[each] =
-      //       splitWordArr[each].charAt(0).toUpperCase() +
-      //       splitWordArr[each].slice(1);
-      //   }
-      //   let resultText = splitWordArr.join(" ");
-      //   return resultText;
-      // };
 
       fetch(
         `${ApiUrl}/api/${tableNameToLowercaseAndSpacesTo_()}/${item}/${completionStatus}`,
